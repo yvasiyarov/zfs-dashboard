@@ -1,5 +1,7 @@
 # Grafana dashboard for ZFS filesystem monitoring with Prometheus and Telegraf
 ![Grafana dashboard screenshot](screen.png)
+![Grafana dashboard screenshot](screen2.png)
+![Grafana dashboard screenshot](screen3.png)
 
 ## Pre-requirements
 1. [Prometheus](https://prometheus.io/) is installed and configured
