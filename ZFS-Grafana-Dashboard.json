@@ -1,14 +1,6 @@
 {
   "__inputs": [
     {
-      "name": "DS_GRAPHITE01",
-      "label": "Graphite01",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "graphite",
-      "pluginName": "Graphite"
-    },
-    {
       "name": "DS_[TRAVEL]_PROMETHEUS",
       "label": "[Travel] Prometheus",
       "description": "",
@@ -35,12 +27,6 @@
       "id": "graph",
       "name": "Graph",
       "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "graphite",
-      "name": "Graphite",
-      "version": "1.0.0"
     },
     {
       "type": "datasource",
@@ -72,12 +58,12 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1575620474178,
+  "iteration": 1578648695110,
   "links": [],
   "panels": [
     {
       "collapsed": false,
-      "datasource": "${DS_GRAPHITE01}",
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -154,13 +140,23 @@
           "instant": false,
           "legendFormat": "{{pool}} fragmentatoin",
           "refId": "D"
+        },
+        {
+          "expr": "zfs_pool_freeing{host=\"$host\", pool=\"$list_of_pools\"}/1024/1024/1024",
+          "legendFormat": "{{pool}} freeing ",
+          "refId": "E"
+        },
+        {
+          "expr": "zfs_pool_leaked{host=\"$host\", pool=\"$list_of_pools\"}/1024/1024/1024",
+          "legendFormat": "{{pool}} leaked",
+          "refId": "F"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "ZFS Pools: size and capacity",
+      "title": "ZFS Pool $list_of_pools : size and capacity",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -250,7 +246,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Fragmentation & capacity usage",
+      "title": "Fragmentation & capacity usage - $list_of_pools pool",
       "type": "gauge"
     },
     {
@@ -326,7 +322,7 @@
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Pool status",
+      "title": "Pool status: $list_of_pools",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -340,7 +336,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_GRAPHITE01}",
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -540,7 +536,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_GRAPHITE01}",
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -740,7 +736,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_GRAPHITE01}",
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -936,12 +932,684 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      },
+      "id": 56,
+      "panels": [],
+      "title": "zpool iostat",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_[TRAVEL]_PROMETHEUS}",
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 37
+      },
+      "id": 54,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "max_over_time(zfs_pool_operations_read{host=\"$host\"}[1m])",
+          "hide": false,
+          "legendFormat": "{{pool}} operations read max",
+          "refId": "B"
+        },
+        {
+          "expr": "quantile_over_time(0.5, zfs_pool_operations_write{host=\"$host\"}[1m])",
+          "hide": false,
+          "legendFormat": "{{pool}} operations write 50q ",
+          "refId": "E"
+        },
+        {
+          "expr": "max_over_time(zfs_pool_operations_write{host=\"$host\"}[1m])",
+          "hide": false,
+          "legendFormat": "{{pool}} operations write max",
+          "refId": "F"
+        },
+        {
+          "expr": "quantile_over_time(0.5, zfs_pool_operations_read{host=\"$host\"}[1m])",
+          "hide": false,
+          "legendFormat": "{{pool}} operations read 50q",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Iostat: Read/write operations per second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "ops",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_[TRAVEL]_PROMETHEUS}",
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 37
+      },
+      "id": 61,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "max_over_time(zfs_pool_bandwidth_read{host=\"$host\"}[1m])/1024/1024",
+          "hide": false,
+          "legendFormat": "{{pool}} bandwidth read max",
+          "refId": "B"
+        },
+        {
+          "expr": "quantile_over_time(0.5, zfs_pool_bandwidth_read{host=\"$host\"}[1m])/1024/1024",
+          "hide": false,
+          "legendFormat": "{{pool}} bandwidth read 50q ",
+          "refId": "E"
+        },
+        {
+          "expr": "max_over_time(zfs_pool_bandwidth_write{host=\"$host\"}[1m])/1024/1024",
+          "hide": false,
+          "legendFormat": "{{pool}} bandwidth write max",
+          "refId": "F"
+        },
+        {
+          "expr": "quantile_over_time(0.5, zfs_pool_bandwidth_write{host=\"$host\"}[1m])/1024/1024",
+          "hide": false,
+          "legendFormat": "{{pool}} bandwidth write50q",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Iostat: Read/write bandwidth per second",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "MBs",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "id": 67,
+      "panels": [],
+      "repeat": "list_of_pools",
+      "title": "zpool iostat - delays",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_[TRAVEL]_PROMETHEUS}",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 46
+      },
+      "id": 74,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "zfs_pool_total_wait_read{host=\"$host\", pool=\"$list_of_pools\"} ",
+          "legendFormat": "{{pool}} total wait",
+          "refId": "A"
+        },
+        {
+          "expr": "zfs_pool_disk_wait_read{host=\"$host\", pool=\"$list_of_pools\"} ",
+          "legendFormat": "{{pool}} disk wait",
+          "refId": "B"
+        },
+        {
+          "expr": "zfs_pool_syncq_wait_read{host=\"$host\", pool=\"$list_of_pools\"} ",
+          "legendFormat": "{{pool}} syncq wait",
+          "refId": "C"
+        },
+        {
+          "expr": "zfs_pool_asyncq_wait_read{host=\"$host\", pool=\"$list_of_pools\"} ",
+          "legendFormat": "{{pool}} asyncq wait",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Read delays: $list_of_pools pool",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "ns",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_[TRAVEL]_PROMETHEUS}",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 46
+      },
+      "id": 81,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "zfs_pool_total_wait_write{host=\"$host\", pool=\"$list_of_pools\"} ",
+          "legendFormat": "{{pool}} total wait",
+          "refId": "A"
+        },
+        {
+          "expr": "zfs_pool_disk_wait_write{host=\"$host\", pool=\"$list_of_pools\"} ",
+          "legendFormat": "{{pool}} disk wait",
+          "refId": "B"
+        },
+        {
+          "expr": "zfs_pool_syncq_wait_write{host=\"$host\", pool=\"$list_of_pools\"} ",
+          "legendFormat": "{{pool}} syncq wait",
+          "refId": "C"
+        },
+        {
+          "expr": "zfs_pool_asyncq_wait_write{host=\"$host\", pool=\"$list_of_pools\"} ",
+          "legendFormat": "{{pool}} asyncq wait",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Write delays - $list_of_pools pool",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "ns",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "id": 90,
+      "panels": [],
+      "repeat": "list_of_pools",
+      "title": "zpool iostat - operations",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_[TRAVEL]_PROMETHEUS}",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 55
+      },
+      "id": 100,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "zfs_pool_syncq_read_operations_pend{host=\"$host\", pool=\"$list_of_pools\"}",
+          "legendFormat": "{{pool}} syncq read operations pending",
+          "refId": "A"
+        },
+        {
+          "expr": "zfs_pool_syncq_read_operations_activ{host=\"$host\", pool=\"$list_of_pools\"}",
+          "legendFormat": "{{pool}} syncq read operations  active",
+          "refId": "B"
+        },
+        {
+          "expr": "zfs_pool_asyncq_read_operations_activ{host=\"$host\", pool=\"$list_of_pools\"}",
+          "legendFormat": "{{pool}} asyncq read operations  active",
+          "refId": "C"
+        },
+        {
+          "expr": "zfs_pool_asyncq_read_operations_pend{host=\"$host\", pool=\"$list_of_pools\"}",
+          "legendFormat": "{{pool}} asyncq read operations pending",
+          "refId": "D"
+        },
+        {
+          "expr": "zfs_pool_scrubq_read_pend{host=\"$host\", pool=\"$list_of_pools\"}",
+          "legendFormat": "{{pool}} scrubq read pending",
+          "refId": "E"
+        },
+        {
+          "expr": "zfs_pool_scrubq_read_activ{host=\"$host\", pool=\"$list_of_pools\"}",
+          "legendFormat": "{{pool}} scrubq read active",
+          "refId": "F"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Read operations pending/active - $list_of_pools pool",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_[TRAVEL]_PROMETHEUS}",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 55
+      },
+      "id": 110,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "zfs_pool_syncq_write_operations_pend{host=\"$host\", pool=\"$list_of_pools\"}",
+          "legendFormat": "{{pool}} syncq write operations pending",
+          "refId": "A"
+        },
+        {
+          "expr": "zfs_pool_syncq_write_operations_activ{host=\"$host\", pool=\"$list_of_pools\"}",
+          "legendFormat": "{{pool}} syncq write operations  active",
+          "refId": "B"
+        },
+        {
+          "expr": "zfs_pool_asyncq_write_operations_activ{host=\"$host\", pool=\"$list_of_pools\"}",
+          "legendFormat": "{{pool}} asyncq write operations  active",
+          "refId": "C"
+        },
+        {
+          "expr": "zfs_pool_asyncq_write_operations_pend{host=\"$host\", pool=\"$list_of_pools\"}",
+          "legendFormat": "{{pool}} asyncq write operations pending",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Write operations pending/active - $list_of_pools pool",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": false,
   "schemaVersion": 20,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "Otravel"
+  ],
   "templating": {
     "list": [
       {
@@ -991,7 +1659,7 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -1011,5 +1679,5 @@
   "timezone": "",
   "title": "ZFS Monitoring Dashboard",
   "uid": "SMRuS4-Zk",
-  "version": 23
+  "version": 42
 }
